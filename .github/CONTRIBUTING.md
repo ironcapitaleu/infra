@@ -5,9 +5,9 @@ From bug reports and feature requests to documentation improvements and code, we
 
 ## How to Contribute
 
-- Report bugs via [issues](https://github.com/ironcapital/infra/issues/new)
-- Propose features via [issues](https://github.com/ironcapital/infra/issues/new)
-- Submit code via [pull requests](https://github.com/ironcapital/infra/pulls)
+- Report bugs via [issues](https://github.com/ironcapitaleu/infra/issues/new)
+- Propose features via [issues](https://github.com/ironcapitaleu/infra/issues/new)
+- Submit code via [pull requests](https://github.com/ironcapitaleu/infra/pulls)
 
 ## Submitting Code via Pull Requests
 
