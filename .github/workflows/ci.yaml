@@ -51,7 +51,7 @@ jobs:
     - name: Display Execution Context
       run: |
         echo "::group::Execution Context"
-        echo "Environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}"#
+        echo "Environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}"
         echo "AWS Region: ${{ env.AWS_REGION }}"
         echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
         echo "AWS Deployment Role: ${{ env.AWS_DEPLOYMENT_ROLE }}"
