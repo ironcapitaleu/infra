@@ -22,5 +22,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+    - name: Display Execution Context
+      run: |
+        echo "::group::Execution Context"
+        echo "GitHub Ref: ${{ github.ref }}"
+        echo "GitHub Event: ${{ github.event_name }}"
+        echo "Terraform version: $(terraform --version)"
     - name: Code Formatting Check
       run: terraform fmt --check --recursive
