@@ -5,9 +5,13 @@ on:
     branches:
       - main
       - master
+      - feat/add-ci-checks
 
 permissions:
   contents: read
+
+env:
+  CARGO_TERM_COLOR: 'always'
 
 jobs:
   ci:
@@ -19,3 +23,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+    - name: Code Formatting Check
+      run: terraform fmt --check --recursive
