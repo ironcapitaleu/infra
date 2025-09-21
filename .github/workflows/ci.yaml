@@ -21,7 +21,12 @@ jobs:
         rust: [stable]
 
     steps:
+
     - uses: actions/checkout@v5
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: latest
     - name: Display Execution Context
       run: |
         echo "::group::Execution Context"
