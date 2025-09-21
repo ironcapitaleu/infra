@@ -18,14 +18,14 @@ variable "unused_var" {
 
 # BAD: Wrong instance type (invalid for some regions, TFLint AWS rules catch this)
 resource "aws_instance" "bad_example" {
-  ami           = "ami-123456"  # placeholder AMI, not valid
-  instance_type = "t2.nano"     # Checkov won’t care, but TFLint will
+  ami           = "ami-123456" # placeholder AMI, not valid
+  instance_type = "t2.nano"    # Checkov won’t care, but TFLint will
 }
 
 # BAD: Public S3 bucket (Checkov will complain about open access & missing encryption)
 resource "aws_s3_bucket" "bad_bucket" {
   bucket = "my-insecure-bucket-example"
-  acl    = "public-read"   # 🚨 Insecure ACL
+  acl    = "public-read" # 🚨 Insecure ACL
 }
 
 resource "aws_s3_bucket_policy" "bad_policy" {
