@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -8,42 +10,50 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = "eu-central-1"
 }
 
-# BAD: Unused variable (TFLint will complain)
-variable "unused_var" {
-  default = "not used"
+# -----------------------------
+# IAM role for EC2
+# -----------------------------
+resource "aws_iam_role" "example" {
+  name = "example-ec2-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+    }]
+  })
 }
 
-# BAD: Wrong instance type (invalid for some regions, TFLint AWS rules catch this)
-resource "aws_instance" "bad_example" {
-  ami           = "ami-123456" # placeholder AMI, not valid
-  instance_type = "t2.nano"    # Checkov won’t care, but TFLint will
+resource "aws_iam_instance_profile" "example" {
+  name = "example-ec2-profile"
+  role = aws_iam_role.example.name
 }
 
-# BAD: Public S3 bucket (Checkov will complain about open access & missing encryption)
-resource "aws_s3_bucket" "bad_bucket" {
-  bucket = "my-insecure-bucket-example"
-  acl    = "public-read" # 🚨 Insecure ACL
-}
+# -----------------------------
+# EC2 Instance
+# -----------------------------
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0" # Amazon Linux 2 in eu-central-1
+  instance_type = "t3.micro"
+  monitoring    = true
+  ebs_optimized = true
 
-resource "aws_s3_bucket_policy" "bad_policy" {
-  bucket = aws_s3_bucket.bad_bucket.id
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action": "s3:*",
-      "Resource": [
-        "arn:aws:s3:::my-insecure-bucket-example",
-        "arn:aws:s3:::my-insecure-bucket-example/*"
-      ]
-    }
-  ]
-}
-POLICY
+  iam_instance_profile = aws_iam_instance_profile.example.name
+
+  metadata_options {
+    http_tokens = "required" # IMDSv2 enforced
+  }
+
+  root_block_device {
+    encrypted = true
+  }
+
+  tags = {
+    Name = "secure-example-instance"
+  }
 }
