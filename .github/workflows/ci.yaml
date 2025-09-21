@@ -57,6 +57,11 @@ jobs:
         echo "AWS Region: ${{ env.AWS_REGION }}"
         echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
         echo "AWS Deployment Role: ${{ env.AWS_DEPLOYMENT_ROLE }}"
+
+
+    - name: Terraform Init
+      run: terraform init --input=false
+      
     - name: Code Formatting Check
       run: terraform fmt --check --recursive
 
@@ -79,7 +84,6 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
         role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_DEPLOYMENT_ROLE }}
         role-session-name: CiSession
-    - name: Terraform Init
-      run: terraform init --input=false
+
     - name: Terraform Plan
       run: terraform plan -input=false --out=tfplan
