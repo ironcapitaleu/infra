@@ -73,7 +73,7 @@ jobs:
       run: terraform validate
 
     - name: Security Checks
-      run: terraform validate
+      run: checkov
 
     - name: Prepare Linting
       run: tflint --init
