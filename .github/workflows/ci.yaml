@@ -20,6 +20,9 @@ env:
 
 jobs:
   ci:
+    # Set environment based on whether the ref is a tag or a branch
+    # If it's a tag starting with 'v', use 'production', else 'development'
+    environment:  ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -61,7 +64,7 @@ jobs:
 
     - name: Terraform Init
       run: terraform init --input=false
-      
+
     - name: Code Formatting Check
       run: terraform fmt --check --recursive
 
