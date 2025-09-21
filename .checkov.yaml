@@ -1,0 +1,4 @@
+directory: .
+framework: terraform
+download-external-modules: true
+soft-fail: false  # fail pipeline if violations are found
