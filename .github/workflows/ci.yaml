@@ -51,16 +51,16 @@ jobs:
     - name: Display Execution Context
       run: |
         echo "::group::Execution Context"
-        echo "Environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}"
+        echo "Environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}"#
+        echo "AWS Region: ${{ env.AWS_REGION }}"
+        echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
+        echo "AWS Deployment Role: ${{ env.AWS_DEPLOYMENT_ROLE }}"
         echo "GitHub Ref: ${{ github.ref }}"
         echo "GitHub Event: ${{ github.event_name }}"
         echo "Terraform version: $(terraform --version)"
         echo "TFLint version: $(tflint --version)"
         echo "UV version: $(uv --version)"
         echo "Checkov version: $(checkov --version)"
-        echo "AWS Region: ${{ env.AWS_REGION }}"
-        echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
-        echo "AWS Deployment Role: ${{ env.AWS_DEPLOYMENT_ROLE }}"
 
 
     - name: Terraform Init
