@@ -33,10 +33,10 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: latest
-    - name: Setup tflint
-      uses: wata727/tflint-action@v1
+    - uses: terraform-linters/setup-tflint@v5
+      name: Setup TFLint
       with:
-        tflint_version: latest
+        tflint_version: v0.52.0
     
     - name: Install the latest version of uv
       uses: astral-sh/setup-uv@v6
