@@ -11,6 +11,12 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+  AWS_DEPLOYMENT_ROLE: ${{ vars.AWS_DEPLOYMENT_ROLE_NAME }}
 
 jobs:
   ci:
@@ -27,11 +33,53 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: latest
+    - name: Setup tflint
+      uses: wata727/tflint-action@v1
+      with:
+        tflint_version: latest
+    
+    - name: Install the latest version of uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+    - name: Install Checkov
+      run: uv tool install checkov
+
     - name: Display Execution Context
       run: |
         echo "::group::Execution Context"
         echo "GitHub Ref: ${{ github.ref }}"
         echo "GitHub Event: ${{ github.event_name }}"
         echo "Terraform version: $(terraform --version)"
+        echo "TFLint version: $(tflint --version)"
+        echo "UV version: $(uv --version)"
+        echo "Checkov version: $(checkov --version)"
+        echo "AWS Region: ${{ env.AWS_REGION }}"
+        echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
+        echo "AWS Deployment Role: ${{ env.AWS_DEPLOYMENT_ROLE }}"
     - name: Code Formatting Check
       run: terraform fmt --check --recursive
+
+    - name: Syntax Validation
+      run: terraform validate
+
+    - name: Security Checks
+      run: terraform validate
+
+    - name: Prepare Linting
+      run: tflint --init
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Linting
+      run: tflint --recursive -f compact
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v5.0.0
+      with:
+        aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_DEPLOYMENT_ROLE }}
+        role-session-name: CiSession
+    - name: Terraform Init
+      run: terraform init --input=false
+    - name: Terraform Plan
+      run: terraform plan -input=false --out=tfplan
