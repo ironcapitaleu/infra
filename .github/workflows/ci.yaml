@@ -27,8 +27,15 @@ jobs:
         rust: [stable]
 
     steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v5.0.0
+      with:
+        aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_DEPLOYMENT_ROLE }}
+        role-session-name: CiSession
 
     - uses: actions/checkout@v5
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
@@ -78,13 +85,6 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
     - name: Linting
       run: tflint --recursive -f compact
-
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v5.0.0
-      with:
-        aws-region: ${{ env.AWS_REGION }}
-        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_DEPLOYMENT_ROLE }}
-        role-session-name: CiSession
 
     - name: Terraform Plan
       run: terraform plan -input=false --out=tfplan
