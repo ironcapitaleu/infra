@@ -53,7 +53,7 @@ resource "cloudflare_zone_setting" "automatic_https_rewrites" {
 resource "cloudflare_zone_setting" "browser_check" {
   zone_id    = var.zone_id
   setting_id = "browser_check"
-  value        = "on"
+  value      = "on"
 }
 
 # Security level - controls challenge sensitivity for bots and normal users
