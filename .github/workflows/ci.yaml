@@ -23,7 +23,7 @@ env:
 
 jobs:
   ci:
-    environment:  ${{ vars.DEPLOYMENT_ENVIRONMENT }}
+    environment:  ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
