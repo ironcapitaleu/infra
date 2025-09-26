@@ -79,12 +79,12 @@ jobs:
         echo "TF_VAR_zone_id: $TF_VAR_zone_id"
         echo "::endgroup::"
 
-
     - name: Terraform Init
       # TODO: change this to use dynamic bucket prefix loaded from env var
-      run: terraform init --input=false \
-        -backend-config="bucket=arkad-terraform-state-${{ env.DEPLOYMENT_ENVIRONMENT }}" \
-        -backend-config="region=${{ env.AWS_REGION }}"
+      run: |
+        terraform init --input=false \
+          -backend-config="bucket=arkad-terraform-state-${{ env.DEPLOYMENT_ENVIRONMENT }}" \
+          -backend-config="region=${{ env.AWS_REGION }}"
 
     - name: Code Formatting Check
       run: terraform fmt --check --recursive
