@@ -1,59 +1,84 @@
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.0"
 
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "5.9.0"
     }
   }
-}
 
-provider "aws" {
-  region = "eu-central-1"
-}
-
-# -----------------------------
-# IAM role for EC2
-# -----------------------------
-resource "aws_iam_role" "example" {
-  name = "example-ec2-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action    = "sts:AssumeRole"
-      Effect    = "Allow"
-      Principal = { Service = "ec2.amazonaws.com" }
-    }]
-  })
-}
-
-resource "aws_iam_instance_profile" "example" {
-  name = "example-ec2-profile"
-  role = aws_iam_role.example.name
-}
-
-# -----------------------------
-# EC2 Instance
-# -----------------------------
-resource "aws_instance" "example" {
-  ami           = "ami-0c55b159cbfafe1f0" # Amazon Linux 2 in eu-central-1
-  instance_type = "t3.micro"
-  monitoring    = true
-  ebs_optimized = true
-
-  iam_instance_profile = aws_iam_instance_profile.example.name
-
-  metadata_options {
-    http_tokens = "required" # IMDSv2 enforced
+  # S3 backend configuration
+  backend "s3" {
+    key            = "cloudflare/terraform.tfstate"
+    dynamodb_table = "terraform-state-lock"
+    encrypt        = true
   }
+}
 
-  root_block_device {
-    encrypted = true
-  }
+provider "cloudflare" {
+  # api_token will be read from CLOUDFLARE_API_TOKEN environment variable
+}
 
-  tags = {
-    Name = "secure-example-instance"
-  }
+# =============================================================================
+# SSL/TLS & HTTPS SETTINGS
+# =============================================================================
+
+# Set SSL to strict
+resource "cloudflare_zone_setting" "ssl" {
+  zone_id    = local.zone_id
+  setting_id = "ssl"
+  value      = "strict"
+}
+
+# Always redirect HTTP to HTTPS
+resource "cloudflare_zone_setting" "always_use_https" {
+  zone_id    = local.zone_id
+  setting_id = "always_use_https"
+  value      = "on"
+}
+
+# Automatic HTTPS rewrites
+resource "cloudflare_zone_setting" "automatic_https_rewrites" {
+  zone_id    = local.zone_id
+  setting_id = "automatic_https_rewrites"
+  value      = "on"
+}
+
+# =============================================================================
+# SECURITY & WAF SETTINGS
+# =============================================================================
+
+# Browser integrity check - blocks malicious browsers
+resource "cloudflare_zone_setting" "browser_check" {
+  zone_id    = local.zone_id
+  setting_id = "browser_check"
+  value      = "on"
+}
+
+# Security level - controls challenge sensitivity for bots and normal users
+resource "cloudflare_zone_setting" "security_level" {
+  zone_id    = local.zone_id
+  setting_id = "security_level"
+  value      = "medium" # Should challenge bots frequently, and minimal challenges for legitimate users
+}
+
+# =============================================================================
+# PERFORMANCE & OPTIMIZATION SETTINGS
+# =============================================================================
+# (Future performance settings like Brotli, minification, etc.)
+
+# =============================================================================
+# DNS RECORDS
+# =============================================================================
+
+# Test A record pointing to a reliable web server
+resource "cloudflare_dns_record" "test_subdomain" {
+  zone_id = local.zone_id
+  name    = "test"
+  content = "185.199.108.153" # GitHub Pages IP - very reliable
+  type    = "A"
+  ttl     = 300 # For testing only, use 3600 for production
+  proxied = false
+  comment = "Test A record pointing to GitHub Pages for testing purposes"
 }

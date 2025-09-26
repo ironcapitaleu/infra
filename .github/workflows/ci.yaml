@@ -5,21 +5,25 @@ on:
     branches:
       - main
       - master
-
+  push:
+    branches:
+      - feat/cloudflare-initial-ci # TODO: remove this after testing
 permissions:
   contents: read
   id-token: write
 
 env:
+  # Set environment based on whether the ref is a tag or a branch
+  # If it's a tag starting with 'v', use 'production', else 'development'
+  DEPLOYMENT_ENVIRONMENT: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}
   AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
   AWS_DEPLOYMENT_ROLE: ${{ vars.AWS_DEPLOYMENT_ROLE_NAME }}
+  CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
 
 jobs:
   ci:
-    # Set environment based on whether the ref is a tag or a branch
-    # If it's a tag starting with 'v', use 'production', else 'development'
-    environment:  ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}
+    environment:  ${{ env.DEPLOYMENT_ENVIRONMENT }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -44,7 +48,12 @@ jobs:
       name: Setup TFLint
       with:
         tflint_version: v0.52.0
-    
+
+    - name: Setup Terraform Environment Variables
+      run: |
+        echo "TF_VAR_environment=${{ env.DEPLOYMENT_ENVIRONMENT }}" >> $GITHUB_ENV
+        echo "TF_VAR_zone_id=${{ vars.CLOUDFLARE_ZONE_ID }}" >> $GITHUB_ENV
+
     - name: Install the latest version of uv
       uses: astral-sh/setup-uv@v6
       with:
@@ -55,20 +64,27 @@ jobs:
     - name: Display Execution Context
       run: |
         echo "::group::Execution Context"
-        echo "Environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}"
+        echo "Environment: ${{ env.DEPLOYMENT_ENVIRONMENT }}"
         echo "AWS Region: ${{ env.AWS_REGION }}"
         echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
         echo "AWS Deployment Role: ${{ env.AWS_DEPLOYMENT_ROLE }}"
+        echo "Cloudflare Zone ID: ${{ vars.ZONE_ID }}"
         echo "GitHub Ref: ${{ github.ref }}"
         echo "GitHub Event: ${{ github.event_name }}"
         echo "Terraform version: $(terraform --version)"
         echo "TFLint version: $(tflint --version)"
         echo "UV version: $(uv --version)"
         echo "Checkov version: $(checkov --version)"
+        echo "TF_VAR_environment: $TF_VAR_environment"
+        echo "TF_VAR_zone_id: $TF_VAR_zone_id"
+        echo "::endgroup::"
 
 
     - name: Terraform Init
-      run: terraform init --input=false
+      # TODO: change this to use dynamic bucket prefix loaded from env var
+      run: terraform init --input=false \
+        -backend-config="bucket=arkad-terraform-state-${{ env.DEPLOYMENT_ENVIRONMENT }}" \
+        -backend-config="region=${{ env.AWS_REGION }}"
 
     - name: Code Formatting Check
       run: terraform fmt --check --recursive
