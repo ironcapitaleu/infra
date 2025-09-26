@@ -83,7 +83,7 @@ jobs:
       # TODO: change this to use dynamic bucket prefix loaded from env var
       run: |
         terraform init --input=false \
-          -backend-config="bucket=arkad-terraform-state-${{ env.DEPLOYMENT_ENVIRONMENT }}" \
+          -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
           -backend-config="region=${{ env.AWS_REGION }}"
 
     - name: Code Formatting Check
