@@ -72,6 +72,7 @@ jobs:
         echo "GitHub Ref: ${{ github.ref }}"
         echo "GitHub Event: ${{ github.event_name }}"
         echo "Terraform version: $(terraform --version)"
+        echo "Terraform Backend Bucket: ${{ env.TERRAFORM_BACKEND_BUCKET }}"
         echo "TFLint version: $(tflint --version)"
         echo "UV version: $(uv --version)"
         echo "Checkov version: $(checkov --version)"
