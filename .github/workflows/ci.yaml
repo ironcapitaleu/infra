@@ -23,7 +23,7 @@ env:
 
 jobs:
   ci:
-    environment:  ${{ env.DEPLOYMENT_ENVIRONMENT }}
+    environment:  ${{ vars.DEPLOYMENT_ENVIRONMENT }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
