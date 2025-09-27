@@ -5,9 +5,7 @@ on:
     branches:
       - main
       - master
-  push:
-    branches:
-      - feat/cloudflare-initial-ci # TODO: remove this after testing
+
 permissions:
   contents: read
   id-token: write
