@@ -74,7 +74,14 @@ resource "cloudflare_zone_setting" "automatic_https_rewrites" {
 resource "cloudflare_zone_setting" "browser_check" {
   zone_id    = local.zone_id
   setting_id = "browser_check"
-  value      = "on"
+  value      = local.security_settings.browser_check
+
+  lifecycle {
+    precondition {
+      condition     = contains(["on", "off"], local.security_settings.browser_check)
+      error_message = "browser_check must be either `on` or `off`"
+    }
+  }
 }
 
 # Security level - controls challenge sensitivity for bots and normal users
