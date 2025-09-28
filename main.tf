@@ -85,9 +85,9 @@ resource "cloudflare_zone_setting" "browser_check" {
 }
 
 resource "cloudflare_zone_setting" "security_level" {
-  zone_id = local.zone_id
-  name    = "security_level"
-  value   = local.security_settings.security_level
+  zone_id    = local.zone_id
+  setting_id = "security_level"
+  value      = local.security_settings.security_level
 
   lifecycle {
     precondition {
