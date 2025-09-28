@@ -56,7 +56,14 @@ resource "cloudflare_zone_setting" "always_use_https" {
 resource "cloudflare_zone_setting" "automatic_https_rewrites" {
   zone_id    = local.zone_id
   setting_id = "automatic_https_rewrites"
-  value      = "on"
+  value      = local.ssl_settings.automatic_https_rewrites
+
+  lifecycle {
+    precondition {
+      condition     = contains(["on", "off"], local.ssl_settings.automatic_https_rewrites)
+      error_message = "automatic_https_rewrites must be either `on` or `off`"
+    }
+  }
 }
 
 # =============================================================================
