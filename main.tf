@@ -24,11 +24,19 @@ provider "cloudflare" {
 # SSL/TLS & HTTPS SETTINGS
 # =============================================================================
 
-# Set SSL to strict
 resource "cloudflare_zone_setting" "ssl" {
-  zone_id    = local.zone_id
-  setting_id = "ssl"
-  value      = "strict"
+  zone_id = local.zone_id
+  name    = "ssl"
+  value   = local.ssl_settings.ssl_mode
+
+  lifecycle {
+    precondition {
+      condition = contains([
+        "off", "flexible", "full", "strict"
+      ], local.ssl_settings.ssl_mode)
+      error_message = "SSL mode must be one of: `off`, `flexible`, `full`, `strict`"
+    }
+  }
 }
 
 # Always redirect HTTP to HTTPS
