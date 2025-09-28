@@ -18,4 +18,16 @@ locals {
     security_level = "medium"
   }
 
+  # DNS Configuration
+  dns_records = {
+    test_subdomain = {
+      name    = "test"
+      content = "185.199.108.153" # GitHub Pages IP - very reliable
+      type    = "A"
+      ttl     = var.environment == "production" ? 3600 : 300
+      proxied = false
+      comment = "Test A record pointing to GitHub Pages for testing purposes"
+    }
+  }
+
 }
