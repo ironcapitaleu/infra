@@ -27,7 +27,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04]
-        rust: [stable]
 
     steps:
     - name: Configure AWS Credentials
@@ -80,7 +79,6 @@ jobs:
         echo "::endgroup::"
 
     - name: Terraform Init
-      # TODO: change this to use dynamic bucket prefix loaded from env var
       run: |
         terraform init --input=false \
           -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
