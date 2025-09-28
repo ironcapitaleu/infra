@@ -1,7 +1,5 @@
 locals {
-  zone_id = var.zone_id
-  # TODO: Will be used for environment-specific configurations
-  # tflint-ignore: terraform_unused_declarations
+  zone_id     = var.zone_id
   environment = var.environment
 
 
@@ -24,10 +22,9 @@ locals {
       name    = "test"
       content = "185.199.108.153" # GitHub Pages IP - very reliable
       type    = "A"
-      ttl     = var.environment == "production" ? 3600 : 300 # 1 hour for prod, 5 min for other envs (dev, ...)
+      ttl     = var.environment == "production" ? 3600 : 300 # 1 hour for `production`, 5 mins for other environment like `development`, ...
       proxied = false
       comment = "Test A record pointing to GitHub Pages for testing purposes"
     }
   }
-
 }

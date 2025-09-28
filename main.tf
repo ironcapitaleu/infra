@@ -108,26 +108,28 @@ resource "cloudflare_zone_setting" "security_level" {
 # DNS RECORDS
 # =============================================================================
 
-resource "cloudflare_dns_record" "test_subdomain" {
+resource "cloudflare_dns_record" "records" {
+  for_each = local.dns_records
+
   zone_id = local.zone_id
-  name    = local.dns_records.test_subdomain.name
-  content = local.dns_records.test_subdomain.content
-  type    = local.dns_records.test_subdomain.type
-  ttl     = local.dns_records.test_subdomain.ttl
-  proxied = local.dns_records.test_subdomain.proxied
-  comment = local.dns_records.test_subdomain.comment
+  name    = each.value.name
+  content = each.value.content
+  type    = each.value.type
+  ttl     = each.value.ttl
+  proxied = each.value.proxied
+  comment = each.value.comment
 
   lifecycle {
     precondition {
       condition = contains([
         "A", "AAAA", "CNAME", "MX", "TXT", "SRV", "NS", "PTR"
-      ], local.dns_records.test_subdomain.type)
-      error_message = "DNS record type must be valid"
+      ], each.value.type)
+      error_message = "DNS record type must be valid for record '${each.key}'"
     }
 
     precondition {
-      condition     = local.dns_records.test_subdomain.ttl >= 60 && local.dns_records.test_subdomain.ttl <= 86400
-      error_message = "TTL must be between 60 and 86400 seconds"
+      condition     = each.value.ttl >= 60 && each.value.ttl <= 86400
+      error_message = "TTL must be between 60 and 86400 seconds for record '${each.key}'"
     }
   }
 }
