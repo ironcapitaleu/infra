@@ -39,11 +39,17 @@ resource "cloudflare_zone_setting" "ssl" {
   }
 }
 
-# Always redirect HTTP to HTTPS
 resource "cloudflare_zone_setting" "always_use_https" {
   zone_id    = local.zone_id
   setting_id = "always_use_https"
-  value      = "on"
+  value      = local.ssl_settings.always_use_https
+
+  lifecycle {
+    precondition {
+      condition     = contains(["on", "off"], local.ssl_settings.always_use_https)
+      error_message = "always_use_https must be either `on` or `off`"
+    }
+  }
 }
 
 # Automatic HTTPS rewrites
