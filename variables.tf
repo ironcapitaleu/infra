@@ -6,7 +6,7 @@ variable "environment" {
     condition = contains([
       "development",
       "production"
-    ], var.input_environment)
+    ], var.environment)
     error_message = "Environment must be one of: `development`, `production`"
   }
 }
@@ -16,7 +16,7 @@ variable "zone_id" {
   type        = string
 
   validation {
-    condition     = can(regex("^[a-f0-9]{32}$", var.input_zone_id))
+    condition     = can(regex("^[a-f0-9]{32}$", var.zone_id))
     error_message = "Zone ID must be a valid 32-character hexadecimal string"
   }
 }
