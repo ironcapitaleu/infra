@@ -7,7 +7,7 @@ variable "environment" {
       "development",
       "production"
     ], var.environment)
-    error_message = "Environment must be one of: `development`, `production`. Got `${var.environment}' instead."
+    error_message = "Environment must be one of: `development`, `production`. Got `${var.environment}` instead."
   }
 }
 
