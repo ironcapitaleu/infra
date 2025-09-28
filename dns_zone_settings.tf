@@ -13,7 +13,7 @@ resource "cloudflare_zone_setting" "ssl" {
       condition = contains([
         "off", "flexible", "full", "strict"
       ], local.ssl_settings.ssl_mode)
-      error_message = "SSL mode must be one of: `off`, `flexible`, `full`, `strict`"
+      error_message = "SSL mode must be one of: {`off`, `flexible`, `full`, `strict`}. Got `${local.ssl_settings.ssl_mode}` instead."
     }
   }
 }
@@ -26,7 +26,7 @@ resource "cloudflare_zone_setting" "always_use_https" {
   lifecycle {
     precondition {
       condition     = contains(["on", "off"], local.ssl_settings.always_use_https)
-      error_message = "always_use_https must be either `on` or `off`"
+      error_message = "`always_use_https` must be either `on` or `off`. Got `${local.ssl_settings.always_use_https}` instead."
     }
   }
 }
@@ -40,7 +40,7 @@ resource "cloudflare_zone_setting" "automatic_https_rewrites" {
   lifecycle {
     precondition {
       condition     = contains(["on", "off"], local.ssl_settings.automatic_https_rewrites)
-      error_message = "automatic_https_rewrites must be either `on` or `off`"
+      error_message = "`automatic_https_rewrites` must be either `on` or `off`. Got `${local.ssl_settings.automatic_https_rewrites}` instead."
     }
   }
 }
@@ -58,7 +58,7 @@ resource "cloudflare_zone_setting" "browser_check" {
   lifecycle {
     precondition {
       condition     = contains(["on", "off"], local.security_settings.browser_check)
-      error_message = "browser_check must be either `on` or `off`"
+      error_message = "`browser_check` must be either `on` or `off`. Got `${local.security_settings.browser_check}` instead."
     }
   }
 }
@@ -73,7 +73,7 @@ resource "cloudflare_zone_setting" "security_level" {
       condition = contains([
         "essentially_off", "low", "medium", "high", "under_attack"
       ], local.security_settings.security_level)
-      error_message = "security_level must be one of: `essentially_off`, `low`, `medium`, `high`, `under_attack`"
+      error_message = "`security_level` must be one of: {`essentially_off`, `low`, `medium`, `high`, `under_attack`}. Got `${local.security_settings.security_level}` instead."
     }
   }
 }

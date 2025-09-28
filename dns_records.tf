@@ -18,12 +18,12 @@ resource "cloudflare_dns_record" "records" {
       condition = contains([
         "A", "AAAA", "CNAME", "MX", "TXT", "SRV", "NS", "PTR"
       ], each.value.type)
-      error_message = "DNS record type must be valid for record '${each.key}'"
+      error_message = "DNS record type must be valid for record `${each.key}`. Needs to be one of: {`A`, `AAAA`, `CNAME`, `MX`, `TXT`, `SRV`, `NS`, `PTR`}. Got `${each.value.type}` instead."
     }
 
     precondition {
       condition     = each.value.ttl >= 60 && each.value.ttl <= 86400
-      error_message = "TTL must be between 60 and 86400 seconds for record '${each.key}'"
+      error_message = "TTL should be between `60` and `86400` seconds for record `${each.key}`. Got `${each.value.ttl}` instead."
     }
   }
 }
