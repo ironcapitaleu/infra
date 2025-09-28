@@ -4,10 +4,10 @@ variable "environment" {
 
   validation {
     condition = contains([
-      "developmentz",
+      "development",
       "production"
     ], var.environment)
-    error_message = "Environment must be one of: `developmentz`, `production`. Got '${var.environment}' instead."
+    error_message = "Environment must be one of: `development`, `production`. Got `${var.environment}' instead."
   }
 }
 
@@ -17,6 +17,6 @@ variable "zone_id" {
 
   validation {
     condition     = can(regex("^[a-f0-9]{32}$", var.zone_id))
-    error_message = "Zone ID must be a valid 32-character hexadecimal string. Got '${var.zone_id}' with length `${length(var.zone_id)}`."
+    error_message = "Zone ID must be a valid 32-character hexadecimal string. Got `${var.zone_id}` with length `${length(var.zone_id)}`."
   }
 }
