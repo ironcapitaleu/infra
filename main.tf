@@ -25,9 +25,9 @@ provider "cloudflare" {
 # =============================================================================
 
 resource "cloudflare_zone_setting" "ssl" {
-  zone_id = local.zone_id
-  setting_id    = "ssl"
-  value   = local.ssl_settings.ssl_mode
+  zone_id    = local.zone_id
+  setting_id = "ssl"
+  value      = local.ssl_settings.ssl_mode
 
   lifecycle {
     precondition {
