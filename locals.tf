@@ -24,7 +24,7 @@ locals {
       name    = "test"
       content = "185.199.108.153" # GitHub Pages IP - very reliable
       type    = "A"
-      ttl     = var.environment == "production" ? 3600 : 300
+      ttl     = var.environment == "production" ? 3600 : 300 # 1 hour for prod, 5 min for other envs (dev, ...)
       proxied = false
       comment = "Test A record pointing to GitHub Pages for testing purposes"
     }
