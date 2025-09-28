@@ -108,13 +108,26 @@ resource "cloudflare_zone_setting" "security_level" {
 # DNS RECORDS
 # =============================================================================
 
-# Test A record pointing to a reliable web server
 resource "cloudflare_dns_record" "test_subdomain" {
   zone_id = local.zone_id
-  name    = "test"
-  content = "185.199.108.153" # GitHub Pages IP - very reliable
-  type    = "A"
-  ttl     = 300 # For testing only, use 3600 for production
-  proxied = false
-  comment = "Test A record pointing to GitHub Pages for testing purposes"
+  name    = local.dns_records.test_subdomain.name
+  content = local.dns_records.test_subdomain.content
+  type    = local.dns_records.test_subdomain.type
+  ttl     = local.dns_records.test_subdomain.ttl
+  proxied = local.dns_records.test_subdomain.proxied
+  comment = local.dns_records.test_subdomain.comment
+
+  lifecycle {
+    precondition {
+      condition = contains([
+        "A", "AAAA", "CNAME", "MX", "TXT", "SRV", "NS", "PTR"
+      ], local.dns_records.test_subdomain.type)
+      error_message = "DNS record type must be valid"
+    }
+
+    precondition {
+      condition     = local.dns_records.test_subdomain.ttl >= 60 && local.dns_records.test_subdomain.ttl <= 86400
+      error_message = "TTL must be between 60 and 86400 seconds"
+    }
+  }
 }
