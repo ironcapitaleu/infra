@@ -1,0 +1,123 @@
+# CloudFront Distribution Configuration
+
+# S3 bucket for CloudFront origin (optional - you can use any origin)
+resource "aws_s3_bucket" "cloudfront_origin" {
+  bucket = "demir-der-boss-cloudfront-origin"
+}
+
+resource "aws_s3_bucket_public_access_block" "cloudfront_origin" {
+  bucket = aws_s3_bucket.cloudfront_origin.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_website_configuration" "cloudfront_origin" {
+  bucket = aws_s3_bucket.cloudfront_origin.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+}
+
+# Upload sample index.html to S3 bucket
+resource "aws_s3_object" "index_html" {
+  bucket       = aws_s3_bucket.cloudfront_origin.id
+  key          = "index.html"
+  content_type = "text/html"
+
+  content = <<-EOT
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudFront Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        .info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 CloudFront Distribution Active!</h1>
+        <p>Congratulations! Your CloudFront distribution is working perfectly.</p>
+        
+        <div class="info">
+            <h3>✅ What's Working:</h3>
+            <p>✓ CloudFront Distribution: <strong>d32d85e5so8321.cloudfront.net</strong></p>
+            <p>✓ S3 Origin: <strong>demir-der-boss-cloudfront-origin</strong></p>
+            <p>✓ HTTPS Redirect: All traffic is encrypted</p>
+            <p>✓ Global CDN: Content cached worldwide</p>
+        </div>
+        
+        <p>This page is being served through AWS CloudFront's global content delivery network!</p>
+        <p><small>Last updated: October 15, 2025</small></p>
+    </div>
+</body>
+</html>
+EOT
+}
+
+# S3 bucket for CloudFront logs
+resource "aws_s3_bucket" "cloudfront_logs" {
+  bucket = "demir-der-boss-origin-bucket-cloudfront-logs"
+}
+
+resource "aws_s3_bucket_public_access_block" "cloudfront_logs" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+
+  block_public_acls       = false
+  block_public_policy     = true
+  ignore_public_acls      = false
+  restrict_public_buckets = true
+}
+
+# Enable ACLs for CloudFront logs bucket
+resource "aws_s3_bucket_ownership_controls" "cloudfront_logs" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "cloudfront_logs" {
+  depends_on = [aws_s3_bucket_ownership_controls.cloudfront_logs]
+
+  bucket = aws_s3_bucket.cloudfront_logs.id
+  acl    = "private"
+}
