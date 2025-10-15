@@ -5,6 +5,14 @@ resource "aws_s3_bucket" "cloudfront_origin" {
   bucket = local.s3_buckets.cloudfront_origin
 }
 
+resource "aws_s3_bucket_versioning" "cloudfront_origin" {
+  bucket = aws_s3_bucket.cloudfront_origin.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "cloudfront_origin" {
   bucket = aws_s3_bucket.cloudfront_origin.id
 
@@ -97,6 +105,14 @@ resource "aws_s3_bucket" "cloudfront_logs" {
   bucket = local.s3_buckets.cloudfront_logs
 }
 
+resource "aws_s3_bucket_versioning" "cloudfront_logs" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "cloudfront_logs" {
   bucket = aws_s3_bucket.cloudfront_logs.id
 
@@ -106,7 +122,6 @@ resource "aws_s3_bucket_public_access_block" "cloudfront_logs" {
   restrict_public_buckets = true
 }
 
-# Enable ACLs for CloudFront logs bucket
 resource "aws_s3_bucket_ownership_controls" "cloudfront_logs" {
   bucket = aws_s3_bucket.cloudfront_logs.id
 
