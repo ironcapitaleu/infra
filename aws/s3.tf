@@ -1,6 +1,7 @@
 # CloudFront Distribution Configuration
 
 # S3 bucket for access logs
+#checkov:skip=CKV_AWS_144:Cross-region replication not required for access logs bucket
 resource "aws_s3_bucket" "access_logs" {
   bucket = local.s3_buckets.access_logs
 }
@@ -43,6 +44,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
 }
 
 # S3 bucket for CloudFront origin content
+#checkov:skip=CKV_AWS_144:Cross-region replication not required for origin content bucket
 resource "aws_s3_bucket" "cloudfront_origin" {
   bucket = local.s3_buckets.cloudfront_origin
 }
@@ -162,6 +164,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudfront_origin
 }
 
 # S3 bucket for CloudFront logs
+#checkov:skip=CKV_AWS_144:Cross-region replication not required for CloudFront logs bucket
 resource "aws_s3_bucket" "cloudfront_logs" {
   bucket = local.s3_buckets.cloudfront_logs
 }
