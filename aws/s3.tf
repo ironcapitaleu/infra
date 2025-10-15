@@ -51,6 +51,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
     id     = "access_logs_lifecycle"
     status = "Enabled"
 
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
+
     transition {
       days          = 14
       storage_class = "STANDARD_IA"
@@ -247,6 +251,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs" {
   rule {
     id     = "cloudfront_logs_lifecycle"
     status = "Enabled"
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
 
     transition {
       days          = 14
