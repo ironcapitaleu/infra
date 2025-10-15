@@ -44,11 +44,35 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
+  bucket = aws_s3_bucket.access_logs.id
+
+  rule {
+    id     = "access_logs_lifecycle"
+    status = "Enabled"
+
+    transition {
+      days          = 14
+      storage_class = "STANDARD_IA"
+    }
+
+    transition {
+      days          = 30
+      storage_class = "GLACIER"
+    }
+
+    expiration {
+      days = 90
+    }
+  }
+}
+
 # S3 bucket for CloudFront origin content
 
 resource "aws_s3_bucket" "cloudfront_origin" {
   #checkov:skip=CKV_AWS_144:Cross-region replication not required for origin content bucket
   #checkov:skip=CKV2_AWS_62:Event notifications not required for static content bucket
+  #checkov:skip=CKV2_AWS_61:Lifecycle configuration not needed for static content bucket
   bucket = local.s3_buckets.cloudfront_origin
 }
 
@@ -214,5 +238,28 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudfront_logs" 
       sse_algorithm     = "aws:kms"
     }
     bucket_key_enabled = true
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+
+  rule {
+    id     = "cloudfront_logs_lifecycle"
+    status = "Enabled"
+
+    transition {
+      days          = 14
+      storage_class = "STANDARD_IA"
+    }
+
+    transition {
+      days          = 30
+      storage_class = "GLACIER"
+    }
+
+    expiration {
+      days = 90
+    }
   }
 }
