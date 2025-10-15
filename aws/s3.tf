@@ -1,8 +1,8 @@
 # CloudFront Distribution Configuration
 
-# S3 bucket for CloudFront origin (optional - you can use any origin)
+# S3 bucket for CloudFront origin content
 resource "aws_s3_bucket" "cloudfront_origin" {
-  bucket = "demir-der-boss-cloudfront-origin"
+  bucket = local.s3_buckets.cloudfront_origin
 }
 
 resource "aws_s3_bucket_public_access_block" "cloudfront_origin" {
@@ -94,7 +94,7 @@ EOT
 
 # S3 bucket for CloudFront logs
 resource "aws_s3_bucket" "cloudfront_logs" {
-  bucket = "demir-der-boss-origin-bucket-cloudfront-logs"
+  bucket = local.s3_buckets.cloudfront_logs
 }
 
 resource "aws_s3_bucket_public_access_block" "cloudfront_logs" {
