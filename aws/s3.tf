@@ -26,15 +26,20 @@ resource "aws_s3_bucket_ownership_controls" "access_logs" {
   bucket = aws_s3_bucket.access_logs.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
-resource "aws_s3_bucket_acl" "access_logs" {
-  depends_on = [aws_s3_bucket_ownership_controls.access_logs]
-
+resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
   bucket = aws_s3_bucket.access_logs.id
-  acl    = "log-delivery-write"
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = "alias/aws/s3"
+      sse_algorithm     = "aws:kms"
+    }
+    bucket_key_enabled = true
+  }
 }
 
 # S3 bucket for CloudFront origin content
@@ -144,6 +149,18 @@ resource "aws_s3_bucket_logging" "cloudfront_origin" {
   target_prefix = "cloudfront-origin-access-logs/"
 }
 
+resource "aws_s3_bucket_server_side_encryption_configuration" "cloudfront_origin" {
+  bucket = aws_s3_bucket.cloudfront_origin.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = "alias/aws/s3"
+      sse_algorithm     = "aws:kms"
+    }
+    bucket_key_enabled = true
+  }
+}
+
 # S3 bucket for CloudFront logs
 resource "aws_s3_bucket" "cloudfront_logs" {
   bucket = local.s3_buckets.cloudfront_logs
@@ -177,13 +194,6 @@ resource "aws_s3_bucket_ownership_controls" "cloudfront_logs" {
   bucket = aws_s3_bucket.cloudfront_logs.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
-}
-
-resource "aws_s3_bucket_acl" "cloudfront_logs" {
-  depends_on = [aws_s3_bucket_ownership_controls.cloudfront_logs]
-
-  bucket = aws_s3_bucket.cloudfront_logs.id
-  acl    = "private"
 }
