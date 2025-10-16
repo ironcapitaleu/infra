@@ -42,9 +42,9 @@ jobs:
         echo "TF_VAR_environment=${{ env.DEPLOYMENT_ENVIRONMENT }}" >> $GITHUB_ENV
         echo "TF_VAR_zone_id=${{ vars.CLOUDFLARE_ZONE_ID }}" >> $GITHUB_ENV
 
-    - name: Display Deployment Context
+    - name: Display Execution Context
       run: |
-        echo "::group::Deployment Context"
+        echo "::group::Execution Context"
         echo "Environment: ${{ env.DEPLOYMENT_ENVIRONMENT }}"
         echo "AWS Region: ${{ env.AWS_REGION }}"
         echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
