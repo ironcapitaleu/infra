@@ -5,8 +5,8 @@ provider "aws" {
 terraform {
   # S3 backend configuration
   backend "s3" {
-    key            = "aws/terraform.tfstate"
-    dynamodb_table = "terraform-aws-state-lock"
-    encrypt        = true
+    key          = "aws/terraform.tfstate"
+    use_lockfile = true
+    encrypt      = true
   }
 }
