@@ -6,7 +6,7 @@ terraform {
   # S3 backend configuration
   backend "s3" {
     key            = "cloudflare/terraform.tfstate"
-    dynamodb_table = "terraform-state-lock"
+    dynamodb_table = "terraform-cloudflare-state-lock"
     encrypt        = true
   }
 }
