@@ -51,6 +51,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
     id     = "access_logs_lifecycle"
     status = "Enabled"
 
+    filter {}
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 1
     }
@@ -251,6 +253,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs" {
   rule {
     id     = "cloudfront_logs_lifecycle"
     status = "Enabled"
+
+    filter {}
 
     abort_incomplete_multipart_upload {
       days_after_initiation = 1
