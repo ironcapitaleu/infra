@@ -58,12 +58,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
     }
 
     transition {
-      days          = 14
+      days          = 30
       storage_class = "STANDARD_IA"
     }
 
     transition {
-      days          = 30
+      days          = 60
       storage_class = "GLACIER"
     }
 
@@ -231,7 +231,7 @@ resource "aws_s3_bucket_ownership_controls" "cloudfront_logs" {
   bucket = aws_s3_bucket.cloudfront_logs.id
 
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
@@ -261,12 +261,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs" {
     }
 
     transition {
-      days          = 14
+      days          = 30
       storage_class = "STANDARD_IA"
     }
 
     transition {
-      days          = 30
+      days          = 60
       storage_class = "GLACIER"
     }
 
