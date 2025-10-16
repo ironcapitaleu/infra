@@ -235,6 +235,44 @@ resource "aws_s3_bucket_ownership_controls" "cloudfront_logs" {
   }
 }
 
+# ACL configuration for CloudFront logs bucket to allow CloudFront service to write logs
+resource "aws_s3_bucket_acl" "cloudfront_logs" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.cloudfront_logs,
+    aws_s3_bucket_public_access_block.cloudfront_logs,
+  ]
+
+  bucket = aws_s3_bucket.cloudfront_logs.id
+  acl    = "log-delivery-write"
+}
+
+# Bucket policy to allow CloudFront to write logs
+resource "aws_s3_bucket_policy" "cloudfront_logs" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowCloudFrontLogsDelivery"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
+        Action = [
+          "s3:PutObject",
+          "s3:GetBucketAcl",
+          "s3:PutBucketAcl"
+        ]
+        Resource = [
+          aws_s3_bucket.cloudfront_logs.arn,
+          "${aws_s3_bucket.cloudfront_logs.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudfront_logs" {
   bucket = aws_s3_bucket.cloudfront_logs.id
 
