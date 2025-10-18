@@ -76,6 +76,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 resource "aws_s3_bucket" "cloudfront_origin" {
+  #checkov:skip=CKV2_AWS_61:Lifecycle configuration not needed for static content bucket
   bucket = var.s3_buckets.cloudfront_origin
 }
 
