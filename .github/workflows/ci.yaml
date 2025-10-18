@@ -30,7 +30,7 @@ jobs:
 
     steps:
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v5.0.0
+      uses: aws-actions/configure-aws-credentials@v5.1.0
       with:
         aws-region: ${{ env.AWS_REGION }}
         role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_DEPLOYMENT_ROLE }}
@@ -42,7 +42,7 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: latest
-    - uses: terraform-linters/setup-tflint@v5
+    - uses: terraform-linters/setup-tflint@v6
       name: Setup TFLint
       with:
         tflint_version: v0.52.0
@@ -53,7 +53,7 @@ jobs:
         echo "TF_VAR_zone_id=${{ vars.CLOUDFLARE_ZONE_ID }}" >> $GITHUB_ENV
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@v6
+      uses: astral-sh/setup-uv@v7
       with:
         version: "latest"
     - name: Install Checkov
