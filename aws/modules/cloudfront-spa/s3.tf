@@ -246,7 +246,7 @@ resource "null_resource" "build_spa" {
 resource "aws_s3_object" "spa_files" {
   depends_on = [null_resource.build_spa]
 
-  for_each = fileset("${var.frontend.path}/dist", "**")
+  for_each = fileset("../../${var.frontend.path}/dist", "**")
 
   bucket = aws_s3_bucket.cloudfront_origin.id
   key    = each.value
