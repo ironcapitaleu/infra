@@ -159,10 +159,11 @@ resource "aws_s3_bucket_public_access_block" "cloudfront_logs" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "cloudfront_logs" {
+  #checkov:skip=CKV2_AWS_65:Access control lists are needed for the logging bucket
   bucket = aws_s3_bucket.cloudfront_logs.id
 
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
