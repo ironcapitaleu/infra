@@ -231,9 +231,7 @@ resource "null_resource" "build_spa" {
   ]
 
   triggers = {
-    # Rebuild if package.json or src files change
-    package_json = filemd5("${var.frontend.path}/package.json")
-    src_hash     = sha256(join("", [for f in fileset("${var.frontend.path}/src", "**") : filemd5("${var.frontend.path}/src/${f}")]))
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
