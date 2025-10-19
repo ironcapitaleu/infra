@@ -1,5 +1,5 @@
 locals {
-  zone_id     = var.zone_id
+  zone_id = var.zone_id
   # environment = var.environment
 
 
