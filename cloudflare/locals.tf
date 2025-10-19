@@ -18,13 +18,13 @@ locals {
 
   # DNS Configuration
   dns_records = {
-    test_subdomain = {
-      name    = "test"
-      content = "185.199.108.153" # GitHub Pages IP - very reliable
-      type    = "A"
+    www_subdomain = {
+      name    = "www"
+      content = "daxydpq86d1sx.cloudfront.net"
+      type    = "CNAME"
       ttl     = local.environment == "production" ? 3600 : 300 # 1 hour for `production`, 5 mins for other environments like `development`, ...
-      proxied = false
-      comment = "Test A record pointing to GitHub Pages for testing purposes"
+      proxied = true
+      comment = "CNAME record for www subdomain pointing to CloudFront distribution"
     }
   }
 }
