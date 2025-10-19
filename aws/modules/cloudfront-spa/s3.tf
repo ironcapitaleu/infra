@@ -238,7 +238,7 @@ resource "null_resource" "build_spa" {
 
   provisioner "local-exec" {
     working_dir = var.frontend.path
-    command     = "npm install && npm run build"
+    command     = "npm install && npm run build -- --outDir ${path.module}/dist"
   }
 }
 
@@ -246,11 +246,11 @@ resource "null_resource" "build_spa" {
 resource "aws_s3_object" "spa_files" {
   depends_on = [null_resource.build_spa]
 
-  for_each = fileset("${var.frontend.path}/dist", "**")
+  for_each = fileset("${path.module}/dist", "**")
 
   bucket = aws_s3_bucket.cloudfront_origin.id
   key    = each.value
-  source = "${var.frontend.path}/dist/${each.value}"
+  source = "${path.module}/dist/${each.value}"
   content_type = lookup({
     "html"  = "text/html"
     "css"   = "text/css"
@@ -268,5 +268,5 @@ resource "aws_s3_object" "spa_files" {
     "eot"   = "application/vnd.ms-fontobject"
   }, reverse(split(".", each.value))[0], "application/octet-stream")
 
-  etag = filemd5("${var.frontend.path}/dist/${each.value}")
+  etag = filemd5("${path.module}/dist/${each.value}")
 }
