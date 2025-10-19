@@ -1,1 +1,2 @@
-data "aws_caller_identity" "current" {}
+# Uncomment when needed
+# data "aws_caller_identity" "current" {}
