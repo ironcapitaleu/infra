@@ -236,35 +236,10 @@ resource "null_resource" "build_and_upload_spa" {
 
   provisioner "local-exec" {
     working_dir = var.frontend.path
-    command     = "rm -rf ${path.module}/dist && mkdir -p ${path.module}/dist && npm install && npm run build -- --outDir ${path.module}/dist && aws s3 sync \"${path.module}/dist\" \"s3://${aws_s3_bucket.cloudfront_origin.bucket}\" --delete"
+    command     = <<EOT
+      npm install
+      npm run build -- --outDir ./dist
+      aws s3 sync "./dist" "s3://${aws_s3_bucket.cloudfront_origin.bucket}" --delete
+    EOT
   }
 }
-
-# Upload all SPA files to S3 from the dist folder
-# resource "aws_s3_object" "spa_files" {
-#   depends_on = [null_resource.build_spa]
-
-#   for_each = fileset("${path.module}/dist", "**")
-
-#   bucket = aws_s3_bucket.cloudfront_origin.id
-#   key    = each.value
-#   source = "${path.module}/dist/${each.value}"
-#   content_type = lookup({
-#     "html"  = "text/html"
-#     "css"   = "text/css"
-#     "js"    = "application/javascript"
-#     "json"  = "application/json"
-#     "png"   = "image/png"
-#     "jpg"   = "image/jpeg"
-#     "jpeg"  = "image/jpeg"
-#     "gif"   = "image/gif"
-#     "svg"   = "image/svg+xml"
-#     "ico"   = "image/x-icon"
-#     "woff"  = "font/woff"
-#     "woff2" = "font/woff2"
-#     "ttf"   = "font/ttf"
-#     "eot"   = "application/vnd.ms-fontobject"
-#   }, reverse(split(".", each.value))[0], "application/octet-stream")
-
-#   etag = filemd5("${path.module}/dist/${each.value}")
-# }
