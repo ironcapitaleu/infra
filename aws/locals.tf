@@ -14,7 +14,7 @@ locals {
     }
 
     frontend = {
-      path = "${path.root}/frontend"
+      path = "frontend"
     }
   }
 }

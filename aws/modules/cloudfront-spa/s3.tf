@@ -166,7 +166,7 @@ resource "aws_s3_bucket_ownership_controls" "cloudfront_logs" {
   bucket = aws_s3_bucket.cloudfront_logs.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "ObjectWriter"
   }
 }
 
@@ -222,8 +222,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs" {
 # ║                           SPA CONTENT UPLOAD                                 ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
-# Build the React app before uploading
-resource "null_resource" "build_spa" {
+# Build and upload the React app
+resource "null_resource" "build_and_upload_spa" {
   depends_on = [
     aws_s3_bucket.cloudfront_origin,
     aws_s3_bucket.access_logs,
@@ -231,42 +231,15 @@ resource "null_resource" "build_spa" {
   ]
 
   triggers = {
-    # Rebuild if package.json or src files change
-    package_json = filemd5("${var.frontend.path}/package.json")
-    src_hash     = sha256(join("", [for f in fileset("${var.frontend.path}/src", "**") : filemd5("${var.frontend.path}/src/${f}")]))
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
     working_dir = var.frontend.path
-    command     = "npm install && npm run build"
+    command     = <<EOT
+      npm install
+      npm run build -- --outDir ./dist
+      aws s3 sync "./dist" "s3://${aws_s3_bucket.cloudfront_origin.bucket}" --delete
+    EOT
   }
-}
-
-# Upload all SPA files from the dist folder
-resource "aws_s3_object" "spa_files" {
-  depends_on = [null_resource.build_spa]
-
-  for_each = fileset("${var.frontend.path}/dist", "**")
-
-  bucket = aws_s3_bucket.cloudfront_origin.id
-  key    = each.value
-  source = "${var.frontend.path}/dist/${each.value}"
-  content_type = lookup({
-    "html"  = "text/html"
-    "css"   = "text/css"
-    "js"    = "application/javascript"
-    "json"  = "application/json"
-    "png"   = "image/png"
-    "jpg"   = "image/jpeg"
-    "jpeg"  = "image/jpeg"
-    "gif"   = "image/gif"
-    "svg"   = "image/svg+xml"
-    "ico"   = "image/x-icon"
-    "woff"  = "font/woff"
-    "woff2" = "font/woff2"
-    "ttf"   = "font/ttf"
-    "eot"   = "application/vnd.ms-fontobject"
-  }, reverse(split(".", each.value))[0], "application/octet-stream")
-
-  etag = filemd5("${var.frontend.path}/dist/${each.value}")
 }
