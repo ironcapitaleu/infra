@@ -5,7 +5,8 @@ resource "aws_s3_bucket" "access_logs" {
   #checkov:skip=CKV_AWS_144:Cross-region replication not required for access logs bucket
   #checkov:skip=CKV2_AWS_62:Event notifications not required for access logs bucket
   #checkov:skip=CKV_AWS_145:Buckets are currently not encrypted with KMS for lower complexity
-  bucket = var.s3_buckets.access_logs
+  bucket        = var.s3_buckets.access_logs
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_versioning" "access_logs" {
@@ -83,7 +84,8 @@ resource "aws_s3_bucket" "cloudfront_origin" {
   #checkov:skip=CKV2_AWS_61:Lifecycle configuration not needed for static content bucket
   #checkov:skip=CKV2_AWS_62:Event notifications not required for static content bucket
   #checkov:skip=CKV_AWS_145:Buckets are currently not encrypted with KMS for lower complexity
-  bucket = var.s3_buckets.cloudfront_origin
+  bucket        = var.s3_buckets.cloudfront_origin
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_versioning" "cloudfront_origin" {
@@ -138,7 +140,8 @@ resource "aws_s3_bucket" "cloudfront_logs" {
   #checkov:skip=CKV_AWS_144:Cross-region replication not required for CloudFront logs bucket
   #checkov:skip=CKV2_AWS_62:Event notifications not required for CloudFront logs bucket
   #checkov:skip=CKV_AWS_145:Buckets are currently not encrypted with KMS for lower complexity
-  bucket = var.s3_buckets.cloudfront_logs
+  bucket        = var.s3_buckets.cloudfront_logs
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_versioning" "cloudfront_logs" {
