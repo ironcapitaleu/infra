@@ -18,11 +18,21 @@ locals {
 
   # DNS Configuration
   dns_records = {
+
+    # www_subdomain = {
+    #   name    = "www"
+    #   content = "daxydpq86d1sx.cloudfront.net"
+    #   type    = "CNAME"
+    #   ttl     = local.environment == "production" ? 3600 : 300 # 1 hour for `production`, 5 mins for other environments like `development`, ...
+    #   proxied = true
+    #   comment = "CNAME record for www subdomain pointing to CloudFront distribution"
+    # }
+
     www_subdomain = {
       name    = "www"
       content = "daxydpq86d1sx.cloudfront.net"
       type    = "CNAME"
-      ttl     = local.environment == "production" ? 3600 : 300 # 1 hour for `production`, 5 mins for other environments like `development`, ...
+      ttl     = 1 # 1 second for proxied records, 1 hour for `production`, 5 mins for other environments like `development`, ...
       proxied = true
       comment = "CNAME record for www subdomain pointing to CloudFront distribution"
     }
