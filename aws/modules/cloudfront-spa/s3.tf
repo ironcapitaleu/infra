@@ -232,26 +232,25 @@ resource "null_resource" "build_spa" {
 
   triggers = {
     # Rebuild if package.json or src files change
-    package_json = filemd5("${path.root}/${var.frontend.path}/package.json")
-    src_hash     = sha256(join("", [for f in fileset("${path.root}/${var.frontend.path}/src", "**") : filemd5("${path.root}/${var.frontend.path}/src/${f}")]))
+    package_json = filemd5("${var.frontend.path}/package.json")
+    src_hash     = sha256(join("", [for f in fileset("${var.frontend.path}/src", "**") : filemd5("${var.frontend.path}/src/${f}")]))
   }
 
   provisioner "local-exec" {
-    working_dir = "${path.root}/${var.frontend.path}"
+    working_dir = var.frontend.path
     command     = "npm install && npm run build"
   }
 }
 
 # Upload all SPA files from the dist folder
 resource "aws_s3_object" "spa_files" {
-  # NOTE: This resource uses paths starting from the caller working directory, not the current module root!
   depends_on = [null_resource.build_spa]
 
-  for_each = fileset("${path.root}/${var.frontend.path}/dist", "**")
+  for_each = fileset("${var.frontend.path}/dist", "**")
 
   bucket = aws_s3_bucket.cloudfront_origin.id
   key    = each.value
-  source = "${path.root}/${var.frontend.path}/dist/${each.value}"
+  source = "${var.frontend.path}/dist/${each.value}"
   content_type = lookup({
     "html"  = "text/html"
     "css"   = "text/css"
@@ -269,5 +268,5 @@ resource "aws_s3_object" "spa_files" {
     "eot"   = "application/vnd.ms-fontobject"
   }, reverse(split(".", each.value))[0], "application/octet-stream")
 
-  etag = filemd5("${path.root}/${var.frontend.path}/dist/${each.value}")
+  etag = filemd5("${var.frontend.path}/dist/${each.value}")
 }
