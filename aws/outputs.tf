@@ -17,3 +17,8 @@ output "cloudfront_origin_bucket_name" {
   description = "The name of the S3 bucket used as CloudFront origin for hosting the SPA content"
   value       = module.cloudfront-spa.cloudfront_origin_bucket_name
 }
+
+# TODO: Remove before merging
+output "spa_files_found" {
+  value = module.cloudfront-spa.spa_files_found
+}
