@@ -14,9 +14,14 @@ permissions:
   contents: read
 
 env:
+  # Set environment based on whether the ref is a tag or a branch
+  # If it's a tag starting with 'v', use 'production', else 'development'
+  DEPLOYMENT_ENVIRONMENT: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}
   AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
   AWS_DEPLOYMENT_ROLE: ${{ vars.AWS_DEPLOYMENT_ROLE_NAME }}
+  CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+  TERRAFORM_BACKEND_BUCKET: ${{ vars.TERRAFORM_BACKEND_BUCKET }}
 
 jobs:
   cd:
@@ -31,50 +36,25 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
-    - name: Display Deployment Context
+    - name: Setup Terraform Environment Variables
       run: |
-        echo "::group::Deployment Context"
-        echo "Deploying to environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'development' }}"
-        echo "GitHub Ref: ${{ github.ref }}"
-        echo "GitHub Event: ${{ github.event_name }}"
+        echo "TF_VAR_environment=${{ env.DEPLOYMENT_ENVIRONMENT }}" >> $GITHUB_ENV
+        echo "TF_VAR_zone_id=${{ vars.CLOUDFLARE_ZONE_ID }}" >> $GITHUB_ENV
+
+    - name: Display Execution Context
+      run: |
+        echo "::group::Execution Context"
+        echo "Environment: ${{ env.DEPLOYMENT_ENVIRONMENT }}"
         echo "AWS Region: ${{ env.AWS_REGION }}"
         echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
         echo "AWS Deployment Role: ${{ env.AWS_DEPLOYMENT_ROLE }}"
-        echo "::endgroup::"
-
-    # This step is only used for testing. TODO: Remove after introducing IaC
-    - name: Test Cloudflare API Token
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      run: |
-        echo "::group::Cloudflare API Token Validation"
-        
-        # Mask the token (again) for security
-        echo "::add-mask::$CLOUDFLARE_API_TOKEN"
-        
-        
-        # Test token by fetching zones
-        echo "Testing Cloudflare API token by fetching zones..."
-        response=$(curl -s -w "%{http_code}" \
-          -X GET "https://api.cloudflare.com/client/v4/zones" \
-          -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-          -H "Content-Type: application/json")
-        
-        http_code="${response: -3}"
-        response_body="${response%???}"
-        
-        if [ "$http_code" = "200" ]; then
-          echo "✅ Cloudflare API token is valid"
-          # Parse and display zone count for verification
-          zone_count=$(echo "$response_body" | grep -o '"count":[0-9]*' | head -1 | cut -d: -f2)
-          echo "Successfully retrieved $zone_count zones"
-        else
-          echo "❌ Cloudflare API token validation failed"
-          echo "HTTP Status Code: $http_code"
-          echo "Response: $response_body"
-          exit 1
-        fi
-        
+        echo "Cloudflare Zone ID: ${{ vars.CLOUDFLARE_ZONE_ID }}"
+        echo "GitHub Ref: ${{ github.ref }}"
+        echo "GitHub Event: ${{ github.event_name }}"
+        echo "Terraform version: $(terraform --version)"
+        echo "Terraform Backend Bucket: ${{ env.TERRAFORM_BACKEND_BUCKET }}"
+        echo "TF_VAR_environment: $TF_VAR_environment"
+        echo "TF_VAR_zone_id: $TF_VAR_zone_id"
         echo "::endgroup::"
 
     - name: Configure AWS Credentials
@@ -83,9 +63,20 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
         role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_DEPLOYMENT_ROLE }}
         role-session-name: DeploymentSession
-    
-    # These following two steps are just tests. TODO: Remove after introducing IaC
-    - name: Test AWS Credentials
-      run: aws sts get-caller-identity
-    - name: List S3 Buckets in Account
-      run: aws s3 ls
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.13.4
+
+    # For now, only for AWS.
+    - name: Terraform Init
+      run: |
+        terraform init --input=false \
+          -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
+          -backend-config="region=${{ env.AWS_REGION }}"
+      working-directory: ./aws
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: ./aws
