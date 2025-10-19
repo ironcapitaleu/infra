@@ -1,6 +1,6 @@
 locals {
   zone_id     = var.zone_id
-  environment = var.environment
+  # environment = var.environment
 
 
   # SSL/TLS & HTTPS Settings
