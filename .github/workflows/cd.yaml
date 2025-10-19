@@ -69,14 +69,24 @@ jobs:
       with:
         terraform_version: 1.13.4
 
-    # For now, only for AWS.
-    - name: Terraform Init
+    - name: Terraform Init (AWS)
       run: |
         terraform init --input=false \
           -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
           -backend-config="region=${{ env.AWS_REGION }}"
       working-directory: ./aws
 
-    - name: Terraform Apply
+    - name: Terraform Init (Cloudflare)
+      run: |
+        terraform init --input=false \
+          -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
+          -backend-config="region=${{ env.AWS_REGION }}"
+      working-directory: ./cloudflare
+
+    - name: Terraform Apply (AWS)
       run: terraform apply -auto-approve
       working-directory: ./aws
+
+    - name: Terraform Apply (Cloudflare)
+      run: terraform apply -auto-approve
+      working-directory: ./cloudflare
