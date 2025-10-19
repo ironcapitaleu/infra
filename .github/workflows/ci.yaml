@@ -78,7 +78,15 @@ jobs:
         echo "TF_VAR_zone_id: $TF_VAR_zone_id"
         echo "::endgroup::"
 
-    - name: Terraform Init
+    - name: Terraform Init (AWS)
+      working-directory: ./aws
+      run: |
+        terraform init --input=false \
+          -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
+          -backend-config="region=${{ env.AWS_REGION }}"
+
+    - name: Terraform Init (Cloudflare)
+      working-directory: ./cloudflare
       run: |
         terraform init --input=false \
           -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
@@ -87,7 +95,12 @@ jobs:
     - name: Code Formatting Check
       run: terraform fmt --check --recursive
 
-    - name: Syntax Validation
+    - name: Syntax Validation (AWS)
+      working-directory: ./aws
+      run: terraform validate
+      
+    - name: Syntax Validation (Cloudflare)
+      working-directory: ./cloudflare
       run: terraform validate
 
     - name: Security Checks
@@ -101,9 +114,9 @@ jobs:
       run: tflint --recursive -f compact
     
     - name: Terraform Plan (AWS)
-      run: terraform plan -input=false --out=tfplan
       working-directory: ./aws
-    
-    - name: Terraform Plan (Cloudflare)
       run: terraform plan -input=false --out=tfplan
+      
+    - name: Terraform Plan (Cloudflare)
       working-directory: ./cloudflare
+      run: terraform plan -input=false --out=tfplan
