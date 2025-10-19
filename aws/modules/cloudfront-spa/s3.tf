@@ -29,7 +29,7 @@ resource "aws_s3_bucket_ownership_controls" "access_logs" {
   bucket = aws_s3_bucket.access_logs.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
