@@ -72,3 +72,73 @@ resource "aws_cloudfront_distribution" "main" {
     prefix          = "cloudfront-logs/"
   }
 }
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                S3 CLOUDFRONT LOGGING BUCKET ACCESS                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# S3 Bucket ACL to allow CloudFront to write logs
+resource "aws_s3_bucket_acl" "cloudfront_logs_acl" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+  acl    = "log-delivery-write"
+}
+
+# S3 Bucket Policy to allow CloudFront to write logs
+resource "aws_s3_bucket_policy" "cloudfront_logs_policy" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "PolicyForS3ServerLog"
+        Effect = "Allow"
+        Principal = {
+          Service = "logging.s3.amazonaws.com"
+        }
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.cloudfront_logs.arn}/*"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
+      }
+    ]
+  })
+}
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                            S3 ORIGIN BUCKET ACCESS                                  ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# S3 Bucket IAM Policy Document for CloudFront Read-Only Access
+data "aws_iam_policy_document" "origin_bucket_policy_read_only" {
+  statement {
+    sid    = "AllowCloudFrontServicePrincipalReadOnly"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+
+    actions = ["s3:GetObject"]
+
+    resources = [
+      "${aws_s3_bucket.cloudfront_origin.arn}/*",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.main.arn]
+    }
+  }
+}
+
+# S3 Bucket Policy for CloudFront Read-Only Access
+resource "aws_s3_bucket_policy" "cloudfront_origin" {
+  bucket = aws_s3_bucket.cloudfront_origin.id
+  policy = data.aws_iam_policy_document.origin_bucket_policy_read_only.json
+}

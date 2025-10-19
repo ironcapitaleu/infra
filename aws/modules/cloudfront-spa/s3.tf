@@ -142,6 +142,7 @@ resource "aws_s3_bucket" "cloudfront_logs" {
   #checkov:skip=CKV_AWS_145:Buckets are currently not encrypted with KMS for lower complexity
   bucket        = var.s3_buckets.cloudfront_logs
   force_destroy = true
+
 }
 
 resource "aws_s3_bucket_versioning" "cloudfront_logs" {
