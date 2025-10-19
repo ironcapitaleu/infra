@@ -100,5 +100,10 @@ jobs:
     - name: Linting
       run: tflint --recursive -f compact
 
-    - name: Terraform Plan
+    - name: Terraform Plan (Cloudflare)
       run: terraform plan -input=false --out=tfplan
+      working-directory: ./cloudflare
+    
+    - name: Terraform Plan (AWS)
+      run: terraform plan -input=false --out=tfplan
+      working-directory: ./aws
