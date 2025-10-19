@@ -247,9 +247,9 @@ resource "aws_s3_object" "spa_files" {
   depends_on = [null_resource.build_spa]
 
   # Take the absolute path of the frontend directory
-  path = abspath(var.frontend.path)
+  spa_root = abspath(var.frontend.path)
 
-  for_each = fileset("${path}/dist", "**")
+  for_each = fileset("${spa_root}/dist", "**")
 
   bucket = aws_s3_bucket.cloudfront_origin.id
   key    = each.value
