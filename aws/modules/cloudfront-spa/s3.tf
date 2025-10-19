@@ -222,8 +222,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs" {
 # ║                           SPA CONTENT UPLOAD                                 ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
-# Build the React app before uploading
-resource "null_resource" "build_spa" {
+# Build and upload the React app
+resource "null_resource" "build_and_upload_spa" {
   depends_on = [
     aws_s3_bucket.cloudfront_origin,
     aws_s3_bucket.access_logs,
@@ -236,18 +236,7 @@ resource "null_resource" "build_spa" {
 
   provisioner "local-exec" {
     working_dir = var.frontend.path
-    command     = "rm -rf ${path.module}/dist && mkdir -p ${path.module}/dist && npm install && npm run build -- --outDir ${path.module}/dist && ls ${path.module}"
-  }
-}
-
-# Upload SPA artifacts to S3 bucket
-resource "null_resource" "upload_spa_to_s3" {
-  depends_on = [null_resource.build_spa]
-
-  provisioner "local-exec" {
-    command = <<EOT
-      aws s3 sync "${path.module}/dist" "s3://${aws_s3_bucket.cloudfront_origin.bucket}" --delete
-EOT
+    command     = "rm -rf ${path.module}/dist && mkdir -p ${path.module}/dist && npm install && npm run build -- --outDir ${path.module}/dist && aws s3 sync \"${path.module}/dist\" \"s3://${aws_s3_bucket.cloudfront_origin.bucket}\" --delete"
   }
 }
 
