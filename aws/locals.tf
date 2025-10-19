@@ -14,7 +14,7 @@ locals {
     }
 
     frontend = {
-      path = abspath("${path.root}/frontend")
+      path = "frontend"
     }
   }
 }
