@@ -1,0 +1,4 @@
+# Purpose
+
+This file is a placeholder for the packaging process.
+This directory serves as a build target that has to be populated during the `terraform plan` phase. It will be cleaned before packaging in the `terraform apply` phase.

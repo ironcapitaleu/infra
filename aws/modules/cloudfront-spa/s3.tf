@@ -238,7 +238,7 @@ resource "null_resource" "build_spa" {
 
   provisioner "local-exec" {
     working_dir = var.frontend.path
-    command     = "npm install && npm run build -- --outDir ${path.module}/dist && ls ${path.module}"
+    command     = "rm -rf ${path.module}/dist && mkdir -p ${path.module}/dist && npm install && npm run build -- --outDir ${path.module}/dist && ls ${path.module}"
   }
 }
 
