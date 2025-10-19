@@ -109,7 +109,7 @@ resource "aws_s3_bucket_policy" "cloudfront_logs_policy" {
 }
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                            S3 ORIGIN BUCKET ACCESS                                  ║
+# ║                            S3 ORIGIN BUCKET ACCESS                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 # S3 Bucket IAM Policy Document for CloudFront Read-Only Access

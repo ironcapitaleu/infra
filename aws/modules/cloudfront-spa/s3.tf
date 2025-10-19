@@ -166,7 +166,7 @@ resource "aws_s3_bucket_ownership_controls" "cloudfront_logs" {
   bucket = aws_s3_bucket.cloudfront_logs.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "ObjectWriter"
   }
 }
 
