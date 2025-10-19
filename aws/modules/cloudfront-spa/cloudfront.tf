@@ -15,6 +15,13 @@ resource "aws_cloudfront_origin_access_control" "oac" {
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 resource "aws_cloudfront_distribution" "main" {
+  #checkov:skip=CKV_AWS_68:No need for WAF in this setup
+  #checkov:skip=CKV_AWS_310:No need for origin failover fow now, single origin is sufficient
+  #checkov:skip=CKV_AWS_374:No need for Geo restriction
+  #checkov:skip=CKV2_AWS_32:No need for response headers policy in this setup
+  #checkov:skip=CKV2_AWS_42:No need for custom SSL certificate, using default CloudFront certificate is sufficient
+  #checkov:skip=CKV2_AWS_47:No need for WAF in this setup
+
   comment             = "CloudFront distribution for hosting an SPA frontend"
   default_root_object = "index.html"
   enabled             = true
@@ -57,5 +64,11 @@ resource "aws_cloudfront_distribution" "main" {
     geo_restriction {
       restriction_type = "none"
     }
+  }
+
+  logging_config {
+    include_cookies = false
+    bucket          = aws_s3_bucket.cloudfront_logs.bucket_domain_name
+    prefix          = "cloudfront-logs/"
   }
 }
