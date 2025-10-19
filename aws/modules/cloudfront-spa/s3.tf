@@ -242,7 +242,7 @@ resource "null_resource" "build_spa" {
   }
 }
 
-# Upload all SPA files from the dist folder
+# Upload all SPA files to S3 from the dist folder
 resource "aws_s3_object" "spa_files" {
   depends_on = [null_resource.build_spa]
 
