@@ -45,14 +45,35 @@ jobs:
     - name: Display Execution Context
       run: |
         echo "::group::Execution Context"
+        
+        echo ""
+        echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+        echo "║                                 GENERAL                                      ║"
+        echo "╚══════════════════════════════════════════════════════════════════════════════╝"
         echo "Environment: ${{ env.DEPLOYMENT_ENVIRONMENT }}"
+        echo "GitHub Ref: ${{ github.ref }}"
+        echo "GitHub Event: ${{ github.event_name }}"
+
+
+        echo ""
+        echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+        echo "║                                   AWS                                      ║"
+        echo "╚══════════════════════════════════════════════════════════════════════════════╝"
         echo "AWS Region: ${{ env.AWS_REGION }}"
         echo "AWS ACCOUNT ID: ${{ env.AWS_ACCOUNT_ID }}"
         echo "AWS Deployment Role: ${{ env.AWS_DEPLOYMENT_ROLE }}"
+
+        echo ""
+        echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+        echo "║                                Cloudflare                                  ║"
+        echo "╚══════════════════════════════════════════════════════════════════════════════╝"
         echo "Cloudflare API Token: ${{ secrets.CLOUDFLARE_API_TOKEN }}"
         echo "Cloudflare Zone ID: ${{ vars.CLOUDFLARE_ZONE_ID }}"
-        echo "GitHub Ref: ${{ github.ref }}"
-        echo "GitHub Event: ${{ github.event_name }}"
+        
+        echo ""
+        echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+        echo "║                                Terraform                                     ║"
+        echo "╚══════════════════════════════════════════════════════════════════════════════╝"
         echo "Terraform version: $(terraform --version)"
         echo "Terraform Backend Bucket: ${{ env.TERRAFORM_BACKEND_BUCKET }}"
         echo "TF_VAR_environment: $TF_VAR_environment"
