@@ -45,7 +45,6 @@ terraform.rc
 
 # macOS system files
 .DS_Store
-.DS_STORE
 
 # Frontend template (from react team: https://github.com/facebook/react/blob/main/.gitignore)
 node_modules
