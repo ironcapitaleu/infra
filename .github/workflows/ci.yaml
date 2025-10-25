@@ -80,6 +80,16 @@ jobs:
         echo "TF_VAR_zone_id: $TF_VAR_zone_id"
         echo "::endgroup::"
 
+    - name: Terraform Init (Cert Setup)
+      working-directory: ./certificate_setup
+      run: |
+        terraform init --input=false \
+          -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
+          -backend-config="region=${{ env.AWS_REGION }}"
+
+
+    
+
     - name: Terraform Init (AWS)
       working-directory: ./aws
       run: |
@@ -114,7 +124,11 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
     - name: Linting
       run: tflint --recursive -f compact
-    
+
+    - name: Terraform Plan (Certificate Setup)
+      working-directory: ./certificate_setup
+      run: terraform plan -input=false --out=tfplan
+
     - name: Terraform Plan (AWS)
       working-directory: ./aws
       run: terraform plan -input=false --out=tfplan
