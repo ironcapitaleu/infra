@@ -23,8 +23,8 @@ resource "cloudflare_dns_record" "acm_validation" {
     }
 
     precondition {
-      condition     = (each.value.ttl == 1) || (each.value.ttl >= 60 && each.value.ttl <= 86400)
-      error_message = "TTL should be exactly `1` (automatic, e.g., if proxied record) or between `60` and `86400` seconds for record `${each.key}`. Got `${each.value.ttl}` instead."
+      condition     = (self.ttl == 1) || (self.ttl >= 60 && self.ttl <= 86400)
+      error_message = "TTL should be exactly `1` (automatic, e.g., if proxied record) or between `60` and `86400` seconds for record `${each.key}`. Got `${self.ttl}` instead."
     }
   }
 }
