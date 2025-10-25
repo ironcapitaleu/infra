@@ -72,6 +72,13 @@ jobs:
       with:
         terraform_version: 1.13.4
 
+    - name: Terraform Init (Certificate Setup)
+      run: |
+        terraform init --input=false \
+          -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
+          -backend-config="region=${{ env.AWS_REGION }}"
+      working-directory: ./certificate_setup
+
     - name: Terraform Init (AWS)
       run: |
         terraform init --input=false \
@@ -85,6 +92,10 @@ jobs:
           -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
           -backend-config="region=${{ env.AWS_REGION }}"
       working-directory: ./cloudflare
+
+    - name: Terraform Apply (Certificate Setup)
+      run: terraform apply -auto-approve
+      working-directory: ./certificate_setup
 
     - name: Terraform Apply (AWS)
       run: terraform apply -auto-approve

@@ -87,9 +87,6 @@ jobs:
           -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
           -backend-config="region=${{ env.AWS_REGION }}"
 
-
-    
-
     - name: Terraform Init (AWS)
       working-directory: ./aws
       run: |
