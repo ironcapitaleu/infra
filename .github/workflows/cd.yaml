@@ -79,28 +79,28 @@ jobs:
           -backend-config="region=${{ env.AWS_REGION }}"
       working-directory: ./certificate_setup
 
-    - name: Terraform Init (AWS)
-      run: |
-        terraform init --input=false \
-          -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
-          -backend-config="region=${{ env.AWS_REGION }}"
-      working-directory: ./aws
+    # - name: Terraform Init (AWS)
+    #   run: |
+    #     terraform init --input=false \
+    #       -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
+    #       -backend-config="region=${{ env.AWS_REGION }}"
+    #   working-directory: ./aws
 
-    - name: Terraform Init (Cloudflare)
-      run: |
-        terraform init --input=false \
-          -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
-          -backend-config="region=${{ env.AWS_REGION }}"
-      working-directory: ./cloudflare
+    # - name: Terraform Init (Cloudflare)
+    #   run: |
+    #     terraform init --input=false \
+    #       -backend-config="bucket=${{ env.TERRAFORM_BACKEND_BUCKET }}" \
+    #       -backend-config="region=${{ env.AWS_REGION }}"
+    #   working-directory: ./cloudflare
 
     - name: Terraform Apply (Certificate Setup)
       run: terraform apply -auto-approve
       working-directory: ./certificate_setup
 
-    - name: Terraform Apply (AWS)
-      run: terraform apply -auto-approve
-      working-directory: ./aws
+    # - name: Terraform Apply (AWS)
+    #   run: terraform apply -auto-approve
+    #   working-directory: ./aws
 
-    - name: Terraform Apply (Cloudflare)
-      run: terraform apply -auto-approve
-      working-directory: ./cloudflare
+    # - name: Terraform Apply (Cloudflare)
+    #   run: terraform apply -auto-approve
+    #   working-directory: ./cloudflare
