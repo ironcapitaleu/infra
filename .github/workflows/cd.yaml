@@ -93,6 +93,11 @@ jobs:
     #       -backend-config="region=${{ env.AWS_REGION }}"
     #   working-directory: ./cloudflare
 
+    # TODOÖ Remove after testing
+    - name: Terraform Plan (Certificate Setup)
+      working-directory: ./certificate_setup
+      run: terraform plan -input=false --out=tfplan
+
     - name: Terraform Apply (Certificate Setup)
       run: terraform apply -auto-approve
       working-directory: ./certificate_setup
