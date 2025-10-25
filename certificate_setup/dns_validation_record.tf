@@ -21,4 +21,5 @@ resource "cloudflare_dns_record" "acm_validation" {
       ], each.value.type)
       error_message = "DNS record type must be valid for record `${each.key}`. Needs to be one of: {`A`, `AAAA`, `CNAME`, `MX`, `TXT`, `SRV`, `NS`, `PTR`}. Got `${each.value.type}` instead."
     }
+  }
 }
