@@ -13,6 +13,7 @@ resource "cloudflare_dns_record" "acm_validation" {
   content = each.value.value
   ttl     = 1
   proxied = false
+  allow_overwrite = true
 
   lifecycle {
     precondition {
