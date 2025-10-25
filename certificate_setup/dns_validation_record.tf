@@ -8,9 +8,9 @@ resource "cloudflare_dns_record" "acm_validation" {
   }
 
   zone_id = local.zone_id
-  name    = each.value.name
+  name    = replace(each.value.name, "/\\.$/", "") # Replace trailing dot if present
   type    = each.value.type
-  content = each.value.value
+  content = replace(each.value.value, "/\\.$/", "") # Replace trailing dot if present
   ttl     = 1
   proxied = false
 
