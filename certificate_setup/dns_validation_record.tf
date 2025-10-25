@@ -21,10 +21,4 @@ resource "cloudflare_dns_record" "acm_validation" {
       ], each.value.type)
       error_message = "DNS record type must be valid for record `${each.key}`. Needs to be one of: {`A`, `AAAA`, `CNAME`, `MX`, `TXT`, `SRV`, `NS`, `PTR`}. Got `${each.value.type}` instead."
     }
-
-    precondition {
-      condition     = (ttl == 1) || (ttl >= 60 && ttl <= 86400)
-      error_message = "TTL should be exactly `1` (automatic, e.g., if proxied record) or between `60` and `86400` seconds for record `${each.key}`. Got `${self.ttl}` instead."
-    }
-  }
 }
