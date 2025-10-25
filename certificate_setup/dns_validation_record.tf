@@ -10,7 +10,7 @@ resource "cloudflare_dns_record" "acm_validation" {
   zone_id = local.zone_id
   name    = each.value.name
   type    = each.value.type
-  value   = each.value.value
+  content = each.value.value
   ttl     = 1
   proxied = false
 
