@@ -45,4 +45,3 @@ resource "aws_cloudfront_distribution" "api_distribution" {
     }
   }
 }
-
