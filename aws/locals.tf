@@ -17,4 +17,16 @@ locals {
       path = "frontend"
     }
   }
+
+  api_backend = {
+    api_gateway = {
+      name       = "arkad-api-gateway-${local.environment}"
+      stage_name = "v1"
+    }
+
+    cloudfront_distribution = {
+      origin_id = "arkad-api-origin"
+    }
+
+  }
 }

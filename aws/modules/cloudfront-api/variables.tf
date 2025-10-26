@@ -5,6 +5,7 @@
 variable "api_gateway" {
   description = "API Gateway configuration"
   type = object({
+    name       = string
     stage_name = string
   })
 }
