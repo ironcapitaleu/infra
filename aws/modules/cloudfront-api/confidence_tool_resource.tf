@@ -43,7 +43,7 @@ resource "aws_api_gateway_integration_response" "confidence_tool_mock_integratio
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
 
-  depends_on = [aws_api_gateway_integration.mock_integration]
+  depends_on = [aws_api_gateway_integration.confidence_tool_mock_integration]
 }
 
 resource "aws_api_gateway_method_response" "get_confidence_tool_response" {
