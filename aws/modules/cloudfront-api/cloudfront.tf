@@ -6,7 +6,8 @@ resource "aws_cloudfront_distribution" "api_distribution" {
   origin {
     domain_name = "${aws_api_gateway_rest_api.simple_api.id}.execute-api.${data.aws_region.current.name}.amazonaws.com"
     origin_id   = var.cloudfront_distribution.origin_id
-
+    origin_path = "/${var.api_gateway.stage_name}"
+    
     custom_origin_config {
       origin_protocol_policy = "https-only"
       http_port              = 80
