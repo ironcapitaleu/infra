@@ -72,3 +72,9 @@ resource "aws_api_gateway_deployment" "confidence_tool_deployment" {
     redeployment = timestamp()
   }
 }
+
+resource "aws_api_gateway_stage" "confidence_tool_stage" {
+  rest_api_id   = aws_api_gateway_rest_api.simple_api.id
+  deployment_id = aws_api_gateway_deployment.confidence_tool_deployment.id
+  stage_name    = var.api_gateway.stage_name
+}
