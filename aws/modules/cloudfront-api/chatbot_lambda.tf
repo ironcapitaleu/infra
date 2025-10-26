@@ -62,7 +62,7 @@ resource "aws_iam_policy" "bedrock_flow_chatbot" {
 
 resource "aws_iam_role_policy_attachment" "lambda_bedrock_flows" {
   role       = aws_iam_role.lambda_exec_chatbot.name
-  policy_arn = aws_iam_policy.bedrock_flows.arn
+  policy_arn = aws_iam_policy.bedrock_flow_chatbot.arn
 }
 
 # Allow API Gateway to invoke the Lambda function
