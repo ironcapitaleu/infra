@@ -14,7 +14,7 @@ resource "aws_lambda_function" "chatbot" {
   function_name    = "chatbot"
   handler          = "index.lambda_handler"
   runtime          = "python3.13"
-  role             = aws_iam_role.lambda_exec.arn
+  role             = aws_iam_role.lambda_exec_chatbot.arn
   filename         = archive_file.chatbot_zip.output_path
   source_code_hash = archive_file.chatbot_zip.output_base64sha256
   timeout          = 900
