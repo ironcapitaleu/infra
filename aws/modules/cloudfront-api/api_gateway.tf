@@ -54,10 +54,10 @@ resource "aws_api_gateway_integration_response" "mock_integration_response" {
   depends_on = [aws_api_gateway_integration.mock_integration]
 }
 
-resource "aws_api_gateway_method_response" "get_hello_response" {
+resource "aws_api_gateway_method_response" "get_chatbot_response" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
-  resource_id = aws_api_gateway_resource.hello_resource.id
-  http_method = aws_api_gateway_method.get_hello.http_method
+  resource_id = aws_api_gateway_resource.chatbot_resource.id
+  http_method = aws_api_gateway_method.get_chatbot.http_method
   status_code = "200"
 
   response_models = {
