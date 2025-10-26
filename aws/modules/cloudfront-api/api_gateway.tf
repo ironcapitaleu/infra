@@ -1,5 +1,5 @@
 # -------------------------
-# API Gateway (Mock /hello)
+# API Gateway (Mock /chatbot)
 # -------------------------
 
 resource "aws_api_gateway_rest_api" "simple_api" {
@@ -10,15 +10,15 @@ resource "aws_api_gateway_rest_api" "simple_api" {
   }
 }
 
-resource "aws_api_gateway_resource" "hello_resource" {
+resource "aws_api_gateway_resource" "chatbot_resource" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
   parent_id   = aws_api_gateway_rest_api.simple_api.root_resource_id
-  path_part   = "hello"
+  path_part   = "chatbot"
 }
 
-resource "aws_api_gateway_method" "get_hello" {
+resource "aws_api_gateway_method" "get_chatbot" {
   rest_api_id      = aws_api_gateway_rest_api.simple_api.id
-  resource_id      = aws_api_gateway_resource.hello_resource.id
+  resource_id      = aws_api_gateway_resource.chatbot_resource.id
   http_method      = "GET"
   authorization    = "NONE"
   api_key_required = false
@@ -26,8 +26,8 @@ resource "aws_api_gateway_method" "get_hello" {
 
 resource "aws_api_gateway_integration" "mock_integration" {
   rest_api_id          = aws_api_gateway_rest_api.simple_api.id
-  resource_id          = aws_api_gateway_resource.hello_resource.id
-  http_method          = aws_api_gateway_method.get_hello.http_method
+  resource_id          = aws_api_gateway_resource.chatbot_resource.id
+  http_method          = aws_api_gateway_method.get_chatbot.http_method
   type                 = "MOCK"
   passthrough_behavior = "WHEN_NO_MATCH"
 
@@ -38,12 +38,12 @@ resource "aws_api_gateway_integration" "mock_integration" {
 
 resource "aws_api_gateway_integration_response" "mock_integration_response" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
-  resource_id = aws_api_gateway_resource.hello_resource.id
-  http_method = aws_api_gateway_method.get_hello.http_method
+  resource_id = aws_api_gateway_resource.chatbot_resource.id
+  http_method = aws_api_gateway_method.get_chatbot.http_method
   status_code = "200"
 
   response_templates = {
-    "application/json" = "{\"message\": \"Hello World!\"}"
+    "application/json" = "{\"message\": \"Hello from the Chatbot!\"}"
   }
 
   # Return CORS header for all responses
