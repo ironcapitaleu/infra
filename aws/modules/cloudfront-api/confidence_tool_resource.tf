@@ -16,7 +16,7 @@ resource "aws_api_gateway_method" "get_confidence_tool" {
   api_key_required = false
 }
 
-resource "aws_api_gateway_integration" "mock_integration" {
+resource "aws_api_gateway_integration" "confidence_tool_mock_integration" {
   rest_api_id          = aws_api_gateway_rest_api.simple_api.id
   resource_id          = aws_api_gateway_resource.confidence_tool_resource.id
   http_method          = aws_api_gateway_method.get_confidence_tool.http_method
@@ -28,7 +28,7 @@ resource "aws_api_gateway_integration" "mock_integration" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "mock_integration_response" {
+resource "aws_api_gateway_integration_response" "confidence_tool_mock_integration_response" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
   resource_id = aws_api_gateway_resource.confidence_tool_resource.id
   http_method = aws_api_gateway_method.get_confidence_tool.http_method
@@ -61,7 +61,7 @@ resource "aws_api_gateway_method_response" "get_confidence_tool_response" {
   }
 }
 
-resource "aws_api_gateway_deployment" "deployment" {
+resource "aws_api_gateway_deployment" "confidence_tool_deployment" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
 
   lifecycle {
