@@ -72,11 +72,12 @@ resource "aws_api_gateway_method_response" "get_chatbot_response" {
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
 
-  # Ensure deployment is recreated when integration response changes
-  depends_on = [aws_api_gateway_integration_response.mock_integration_response]
-
   lifecycle {
     create_before_destroy = true
+  }
+
+  triggers = {
+    redeployment = timestamp()
   }
 }
 
