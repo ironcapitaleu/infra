@@ -3,13 +3,13 @@
 # -------------------------
 
 resource "aws_api_gateway_resource" "confidence_tool_resource" {
-  rest_api_id = aws_api_gateway_rest_api.simple_api.id
-  parent_id   = aws_api_gateway_rest_api.simple_api.root_resource_id
+  rest_api_id = aws_api_gateway_rest_api.api_endpoint.id
+  parent_id   = aws_api_gateway_rest_api.api_endpoint.root_resource_id
   path_part   = "confidence-tool"
 }
 
 resource "aws_api_gateway_method" "get_confidence_tool" {
-  rest_api_id      = aws_api_gateway_rest_api.simple_api.id
+  rest_api_id      = aws_api_gateway_rest_api.api_endpoint.id
   resource_id      = aws_api_gateway_resource.confidence_tool_resource.id
   http_method      = "GET"
   authorization    = "NONE"
@@ -17,7 +17,7 @@ resource "aws_api_gateway_method" "get_confidence_tool" {
 }
 
 resource "aws_api_gateway_integration" "confidence_tool_lambda" {
-  rest_api_id             = aws_api_gateway_rest_api.simple_api.id
+  rest_api_id             = aws_api_gateway_rest_api.api_endpoint.id
   resource_id             = aws_api_gateway_resource.confidence_tool_resource.id
   http_method             = aws_api_gateway_method.get_confidence_tool.http_method
   type                    = "AWS_PROXY"

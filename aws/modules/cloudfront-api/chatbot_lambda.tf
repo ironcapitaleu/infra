@@ -71,5 +71,5 @@ resource "aws_lambda_permission" "apigw_chatbot" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.chatbot.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.simple_api.execution_arn}/*/*"
+  source_arn    = "${aws_api_gateway_rest_api.api_endpoint.execution_arn}/*/*"
 }

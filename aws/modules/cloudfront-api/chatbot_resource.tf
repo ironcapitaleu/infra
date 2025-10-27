@@ -3,13 +3,13 @@
 # -------------------------
 
 resource "aws_api_gateway_resource" "chatbot_resource" {
-  rest_api_id = aws_api_gateway_rest_api.simple_api.id
-  parent_id   = aws_api_gateway_rest_api.simple_api.root_resource_id
+  rest_api_id = aws_api_gateway_rest_api.api_endpoint.id
+  parent_id   = aws_api_gateway_rest_api.api_endpoint.root_resource_id
   path_part   = "chatbot"
 }
 
 resource "aws_api_gateway_method" "get_chatbot" {
-  rest_api_id      = aws_api_gateway_rest_api.simple_api.id
+  rest_api_id      = aws_api_gateway_rest_api.api_endpoint.id
   resource_id      = aws_api_gateway_resource.chatbot_resource.id
   http_method      = "GET"
   authorization    = "NONE"
@@ -18,7 +18,7 @@ resource "aws_api_gateway_method" "get_chatbot" {
 
 # Proxy integration with Lambda
 resource "aws_api_gateway_integration" "chatbot_lambda" {
-  rest_api_id             = aws_api_gateway_rest_api.simple_api.id
+  rest_api_id             = aws_api_gateway_rest_api.api_endpoint.id
   resource_id             = aws_api_gateway_resource.chatbot_resource.id
   http_method             = aws_api_gateway_method.get_chatbot.http_method
   integration_http_method = "POST"

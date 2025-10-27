@@ -1,4 +1,4 @@
-resource "aws_api_gateway_rest_api" "simple_api" {
+resource "aws_api_gateway_rest_api" "api_endpoint" {
   name        = var.api_gateway.name
   description = "API Gateway for ${var.api_gateway.name}"
   endpoint_configuration {
@@ -7,7 +7,7 @@ resource "aws_api_gateway_rest_api" "simple_api" {
 }
 
 resource "aws_api_gateway_deployment" "deployment" {
-  rest_api_id = aws_api_gateway_rest_api.simple_api.id
+  rest_api_id = aws_api_gateway_rest_api.api_endpoint.id
 
   depends_on = [
     aws_api_gateway_resource.chatbot_resource,
@@ -28,7 +28,7 @@ resource "aws_api_gateway_deployment" "deployment" {
 }
 
 resource "aws_api_gateway_stage" "stage" {
-  rest_api_id   = aws_api_gateway_rest_api.simple_api.id
+  rest_api_id   = aws_api_gateway_rest_api.api_endpoint.id
   deployment_id = aws_api_gateway_deployment.deployment.id
   stage_name    = var.api_gateway.stage_name
 }
