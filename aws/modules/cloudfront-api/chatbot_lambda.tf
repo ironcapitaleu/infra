@@ -16,7 +16,7 @@ resource "aws_lambda_function" "chatbot" {
   #checkov:skip=CKV_AWS_117:No need for VPC configuration for this Proxy Lambda
   #checkov:skip=CKV_AWS_173:No sensitive information in environment variables.
   #checkov:skip=CKV_AWS_272:No Code Signing needed for Proxy Lambda
-  
+
   function_name                  = "chatbot"
   handler                        = "index.lambda_handler"
   runtime                        = "python3.13"
