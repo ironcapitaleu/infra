@@ -9,6 +9,15 @@ resource "aws_api_gateway_rest_api" "simple_api" {
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
 
+  depends_on = [
+    aws_api_gateway_resource.chatbot_resource,
+    aws_api_gateway_method.get_chatbot,
+    aws_api_gateway_integration.chatbot_lambda,
+    aws_api_gateway_resource.confidence_tool_resource,
+    aws_api_gateway_method.get_confidence_tool,
+    aws_api_gateway_integration.confidence_tool_lambda,
+  ]
+
   lifecycle {
     create_before_destroy = true
   }
