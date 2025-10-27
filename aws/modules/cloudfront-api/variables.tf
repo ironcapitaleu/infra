@@ -20,3 +20,12 @@ variable "cloudfront_distribution" {
     origin_id = string
   })
 }
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                               SPA DOMAIN                                     ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+variable "spa_domain" {
+  description = "The domain name of the SPA to allow CORS access"
+  type        = string
+}

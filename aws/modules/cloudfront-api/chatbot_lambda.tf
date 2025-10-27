@@ -18,6 +18,12 @@ resource "aws_lambda_function" "chatbot" {
   filename         = archive_file.chatbot_zip.output_path
   source_code_hash = archive_file.chatbot_zip.output_base64sha256
   timeout          = 900
+
+  environment {
+    variables = {
+      SPA_DOMAIN = var.spa_domain
+    }
+  }
 }
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗

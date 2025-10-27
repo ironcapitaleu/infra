@@ -5,4 +5,5 @@ module "cloudfront-api" {
 
   cloudfront_distribution = local.api_backend.cloudfront_distribution
 
+  spa_domain = module.cloudfront-spa.cloudfront_url
 }
