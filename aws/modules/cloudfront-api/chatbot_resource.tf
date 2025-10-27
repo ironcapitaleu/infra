@@ -1,5 +1,5 @@
 # -------------------------
-# API Gateway (Mock /chatbot)
+# API Gateway (Lambda Proxy /chatbot)
 # -------------------------
 
 resource "aws_api_gateway_resource" "chatbot_resource" {

@@ -1,5 +1,5 @@
 # -------------------------
-# API Gateway (Mock /confidence-tool)
+# API Gateway (Lambda Proxy /confidence-tool)
 # -------------------------
 
 resource "aws_api_gateway_resource" "confidence_tool_resource" {
