@@ -4,7 +4,7 @@ resource "aws_cloudfront_distribution" "api_distribution" {
   comment         = "CloudFront distribution for API Gateway"
 
   origin {
-    domain_name = "${aws_api_gateway_rest_api.simple_api.id}.execute-api.${data.aws_region.current.name}.amazonaws.com"
+    domain_name = "${aws_api_gateway_rest_api.api_endpoint.id}.execute-api.${data.aws_region.current.name}.amazonaws.com"
     origin_id   = var.cloudfront_distribution.origin_id
     origin_path = "/${var.api_gateway.stage_name}"
 
