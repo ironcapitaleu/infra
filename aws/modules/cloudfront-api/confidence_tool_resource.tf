@@ -9,6 +9,9 @@ resource "aws_api_gateway_resource" "confidence_tool_resource" {
 }
 
 resource "aws_api_gateway_method" "get_confidence_tool" {
+  #checkov:skip=CKV_AWS_59:Access will be handled with IGAM integration.
+  #checkov:skip=CKV2_AWS_53:No Request Validation needed for this Proxy Method.
+  
   rest_api_id      = aws_api_gateway_rest_api.api_endpoint.id
   resource_id      = aws_api_gateway_resource.confidence_tool_resource.id
   http_method      = "GET"
