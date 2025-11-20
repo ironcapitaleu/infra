@@ -37,7 +37,7 @@ jobs:
         role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_DEPLOYMENT_ROLE }}
         role-session-name: CiSession
 
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
